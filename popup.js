@@ -79,9 +79,19 @@ document.addEventListener("DOMContentLoaded", function () {
           updateJsonOutput();
         });
   
+        // Add cookie attributes info
+        const attributes = document.createElement("span");
+        attributes.className = "cookie-attributes";
+        const attrs = [];
+        if (cookie.httpOnly) attrs.push("httpOnly");
+        if (cookie.secure) attrs.push("secure");
+        if (cookie.session) attrs.push("session");
+        attributes.textContent = attrs.length > 0 ? ` [${attrs.join(", ")}]` : "";
+  
         label.appendChild(checkbox);
         label.appendChild(name);
         label.appendChild(value);
+        label.appendChild(attributes);
         cookieList.appendChild(label);
       });
   
