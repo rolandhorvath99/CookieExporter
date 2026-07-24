@@ -26,8 +26,12 @@ document.addEventListener("DOMContentLoaded", function () {
         if (response && response.cookies) {
           cookiesData = response.cookies.map(cookie => ({ ...cookie, checked: false }));
           renderCookies();
+        } else if (response && response.error) {
+          console.error("Error:", response.error);
+          cookieList.innerHTML = `<p style="color: red;">Error loading cookies: ${response.error}</p>`;
         } else {
           console.error("Failed to fetch cookies.");
+          cookieList.innerHTML = `<p style="color: red;">Failed to fetch cookies.</p>`;
         }
       });
     }
