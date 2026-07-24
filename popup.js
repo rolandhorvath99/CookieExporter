@@ -8,24 +8,23 @@ document.addEventListener("DOMContentLoaded", function () {
     const downloadBtn = document.getElementById("downloadBtn");
     const domainName = document.getElementById("domainName");
   
-    let cookiesData = [];
-    let currentURL = "";
-  
-    jsonOutput.value = `"cookies": []`;
+    let currentTabId = null;
   
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       const tab = tabs[0];
       currentURL = tab.url;
+      currentTabId = tab.id;
       const domain = new URL(tab.url).hostname;
       domainName.textContent = domain;
-      loadCookies(currentURL);
+      loadCookies(currentURL, currentTabId);
     });
   
-    function loadCookies(url) {
+    function loadCookies(url, tabId) {
       console.log("🔍 Loading cookies for URL:", url);
+      console.log("📱 Using Tab ID:", tabId);
       cookieList.innerHTML = "<p>Loading cookies...</p>";
       
-      chrome.runtime.sendMessage({ action: "getCookies", url: url }, function (response) {
+      chrome.runtime.sendMessage({ action: "getCookies", url: url, tabId: tabId }, function (response) {
         console.log("📨 Response received from background script:", response);
         
         if (response && response.cookies && response.cookies.length > 0) {
@@ -132,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   
     refreshBtn.addEventListener("click", () => {
-      loadCookies(currentURL);
+      loadCookies(currentURL, currentTabId);
     });
   
     searchInput.addEventListener("input", () => {
