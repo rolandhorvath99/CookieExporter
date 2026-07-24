@@ -22,15 +22,24 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   
     function loadCookies(url) {
+      console.log("🔍 Loading cookies for URL:", url);
+      cookieList.innerHTML = "<p>Loading cookies...</p>";
+      
       chrome.runtime.sendMessage({ action: "getCookies", url: url }, function (response) {
-        if (response && response.cookies) {
+        console.log("📨 Response received from background script:", response);
+        
+        if (response && response.cookies && response.cookies.length > 0) {
+          console.log(`✅ Loaded ${response.cookies.length} cookies`);
           cookiesData = response.cookies.map(cookie => ({ ...cookie, checked: false }));
           renderCookies();
+        } else if (response && response.cookies && response.cookies.length === 0) {
+          console.warn("⚠️ No cookies found for this domain");
+          cookieList.innerHTML = `<p style="color: orange;">No cookies found. This may be normal for some sites.</p>`;
         } else if (response && response.error) {
-          console.error("Error:", response.error);
+          console.error("❌ Error:", response.error);
           cookieList.innerHTML = `<p style="color: red;">Error loading cookies: ${response.error}</p>`;
         } else {
-          console.error("Failed to fetch cookies.");
+          console.error("❌ Failed to fetch cookies - no response");
           cookieList.innerHTML = `<p style="color: red;">Failed to fetch cookies.</p>`;
         }
       });
