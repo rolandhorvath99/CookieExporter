@@ -8,7 +8,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const downloadBtn = document.getElementById("downloadBtn");
     const domainName = document.getElementById("domainName");
   
+    let cookiesData = [];
+    let currentURL = "";
     let currentTabId = null;
+  
+    jsonOutput.value = `"cookies": []`;
   
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       const tab = tabs[0];

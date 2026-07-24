@@ -3,8 +3,17 @@ let collectedCookies = {};
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "getCookies" && message.url) {
-    // Use the CDP/debugger method which is more reliable for httpOnly cookies
-    getCookiesThroughDebugger(message.url, sender.tab.id, sendResponse);
+    // Use tabId from message if available, otherwise try sender.tab.id
+    const tabId = message.tabId || (sender.tab && sender.tab.id);
+    
+    if (tabId) {
+      // Use the CDP/debugger method which is more reliable for httpOnly cookies
+      getCookiesThroughDebugger(message.url, tabId, sendResponse);
+    } else {
+      // No tabId available, use standard API
+      console.warn("⚠️ No tabId available, using standard API");
+      getCookiesThroughStandardAPI(message.url, sendResponse);
+    }
     return true;
   }
   
@@ -17,7 +26,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
  * Method 1: Get cookies via the Chrome DevTools Protocol (most reliable for httpOnly)
  * This bypasses JavaScript restrictions and accesses cookies at the protocol level
  */
-async function getCookiesThroughDebugger(url, tabId, sendResponse) {
+function getCookiesThroughDebugger(url, tabId, sendResponse) {
   try {
     const urlObj = new URL(url);
     const domain = urlObj.hostname;
@@ -25,40 +34,61 @@ async function getCookiesThroughDebugger(url, tabId, sendResponse) {
     console.log("🔍 Attempting CDP method for:", domain);
     
     // Attach debugger to the tab
-    await chrome.debugger.attach({ tabId }, "1.3");
-    
-    try {
-      // Enable Storage domain
-      await chrome.debugger.sendCommand({ tabId }, "Storage.enable");
-      
-      // Get ALL cookies via Storage.getCookies() - includes httpOnly and secure!
-      const result = await chrome.debugger.sendCommand({ tabId }, "Storage.getCookies");
-      console.log(`✅ Storage.getCookies: ${result.cookies.length} cookies found`);
-      
-      // Also try Network.getCookies for the specific URL
-      await chrome.debugger.sendCommand({ tabId }, "Network.enable");
-      const networkResult = await chrome.debugger.sendCommand({ tabId }, "Network.getCookies", {
-        urls: [url]
-      });
-      console.log(`✅ Network.getCookies: ${networkResult.cookies.length} cookies found`);
-      
-      // Merge results, preferring Storage.getCookies data
-      let allCookies = mergeAndDeduplicateCookies(result.cookies, networkResult.cookies);
-      
-      logAndRespond(allCookies, domain, sendResponse);
-    } finally {
-      // Always detach debugger
-      try {
-        await chrome.debugger.detach({ tabId });
-      } catch (e) {
-        console.log("Debugger detach error (expected if tab closed):", e.message);
+    chrome.debugger.attach({ tabId }, "1.3", () => {
+      if (chrome.runtime.lastError) {
+        console.warn("⚠️ Debugger attach failed:", chrome.runtime.lastError.message);
+        // Fallback to standard API
+        getCookiesThroughStandardAPI(url, sendResponse);
+        return;
       }
-    }
+      
+      // Enable Storage domain
+      chrome.debugger.sendCommand({ tabId }, "Storage.enable", {}, () => {
+        if (chrome.runtime.lastError) {
+          console.warn("⚠️ Storage.enable failed:", chrome.runtime.lastError.message);
+          chrome.debugger.detach({ tabId });
+          getCookiesThroughStandardAPI(url, sendResponse);
+          return;
+        }
+        
+        // Get ALL cookies via Storage.getCookies()
+        chrome.debugger.sendCommand({ tabId }, "Storage.getCookies", {}, (result) => {
+          if (chrome.runtime.lastError) {
+            console.warn("⚠️ Storage.getCookies failed:", chrome.runtime.lastError.message);
+            chrome.debugger.detach({ tabId });
+            getCookiesThroughStandardAPI(url, sendResponse);
+            return;
+          }
+          
+          console.log(`✅ Storage.getCookies: ${(result.cookies || []).length} cookies found`);
+          
+          // Enable Network domain
+          chrome.debugger.sendCommand({ tabId }, "Network.enable", {}, () => {
+            // Get cookies from Network as well
+            chrome.debugger.sendCommand({ tabId }, "Network.getCookies", { urls: [url] }, (networkResult) => {
+              if (!chrome.runtime.lastError && networkResult.cookies) {
+                console.log(`✅ Network.getCookies: ${networkResult.cookies.length} cookies found`);
+              }
+              
+              // Detach debugger
+              chrome.debugger.detach({ tabId }, () => {
+                console.log("✅ Debugger detached");
+              });
+              
+              // Merge results
+              const allCookies = mergeAndDeduplicateCookies(
+                result.cookies || [],
+                (networkResult && networkResult.cookies) || []
+              );
+              
+              logAndRespond(allCookies, domain, sendResponse);
+            });
+          });
+        });
+      });
+    });
   } catch (error) {
-    console.warn("⚠️ CDP method failed:", error.message);
-    console.log("📍 Falling back to chrome.cookies.getAll()...");
-    
-    // Fallback to the standard cookies API
+    console.error("❌ CDP method error:", error.message);
     getCookiesThroughStandardAPI(url, sendResponse);
   }
 }
