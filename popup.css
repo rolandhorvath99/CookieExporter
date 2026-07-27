@@ -1,180 +1,136 @@
-* {
-  box-sizing: border-box;
-}
-
 body {
   font-family: Arial, sans-serif;
   background-color: #f5e6cc;
   margin: 0;
-  padding: 12px;
-  width: 500px;
-  height: 650px;
-  overflow: hidden !important;
-  display: flex;
-  flex-direction: column;
+  padding: 10px;
+  width: 450px;
+  height: 750px;
+  overflow: hidden;
 }
 
 h1 {
   text-align: center;
   font-size: 18px;
-  margin: 0 0 3px 0;
-  color: #5c4033;
+  margin: 0 0 5px 0;
 }
 
 #domainName {
+  display: block;
   text-align: center;
   font-size: 12px;
-  color: #999;
-  margin: 0 0 6px 0;
+  color: #777;
+  margin: 0 0 10px 0;
 }
 
 #searchInput {
-  width: 100%;
-  padding: 7px 9px;
-  margin: 0 0 6px 0;
-  border: 1px solid #d2b48c;
+  width: calc(100% - 20px);
+  padding: 8px;
+  margin: 0 auto 10px auto;
+  display: block;
   border-radius: 4px;
+  border: 1px solid #d2b48c;
   background-color: #fffaf0;
-  font-size: 12px;
-  color: #5c4033;
   outline: none;
-}
-
-#searchInput:focus {
-  border-color: #a0826d;
-  background-color: #fff;
+  font-size: 14px;
+  color: #5c4033;
+  box-sizing: border-box;
 }
 
 .buttons {
   display: flex;
   justify-content: center;
-  gap: 6px;
-  margin-bottom: 6px;
-  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 button {
-  padding: 5px 10px;
+  padding: 6px 12px;
   background-color: #d2b48c;
-  color: white;
+  color: #fff;
   border: none;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: bold;
   cursor: pointer;
-  transition: opacity 0.2s;
-  white-space: nowrap;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 12px;
 }
 
 button:hover {
-  opacity: 0.85;
-}
-
-#refreshBtn {
-  background-color: #ffcc00;
-  color: #333;
+  opacity: 0.9;
 }
 
 #cookieList {
-  flex: 0 0 120px;
+  max-height: 220px;
   overflow-y: auto;
-  overflow-x: hidden;
-  border: 1px solid #e0d4c0;
-  border-radius: 4px;
-  background-color: #fefdf8;
-  padding: 5px 3px;
-  margin-bottom: 6px;
+  padding: 0 2px;
+  margin-bottom: 10px;
 }
 
 .cookie-item {
   display: flex;
-  align-items: flex-start;
-  margin-bottom: 4px;
-  padding: 3px 3px;
-  border-radius: 3px;
+  align-items: center;
+  margin-bottom: 6px;
   word-break: break-word;
 }
 
-.cookie-item:hover {
-  background-color: #f9f7f0;
-}
-
 .cookie-item input[type="checkbox"] {
-  margin-right: 5px;
-  margin-top: 2px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.cookie-item strong {
-  color: #5c4033;
-  font-size: 11px;
-  margin-right: 2px;
+  margin-right: 6px;
 }
 
 .cookie-value {
-  font-size: 11px;
-  color: #666;
-  word-break: break-all;
   flex: 1;
-  padding: 0 3px;
+  overflow-x: auto;
+  white-space: nowrap;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.cookie-value::-webkit-scrollbar {
+  display: none;
 }
 
 .cookie-attributes {
-  font-size: 10px;
+  font-size: 12px;
   color: #a0826d;
-  margin-left: 3px;
-  white-space: nowrap;
-  flex-shrink: 0;
+  margin-left: 8px;
+  font-style: italic;
 }
 
 #jsonOutput {
   width: 100%;
-  height: 70px;
-  padding: 7px;
-  margin-bottom: 6px;
+  height: 120px;
+  font-family: monospace;
   border: 1px solid #d2b48c;
   border-radius: 4px;
+  padding: 8px;
+  resize: none;
   background-color: #fffaf0;
   color: #5c4033;
-  font-family: 'Courier New', monospace;
-  font-size: 10px;
   overflow-y: auto;
-  resize: none;
+  margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
 #downloadBtn {
   width: 100%;
-  padding: 9px;
+  padding: 10px;
   background-color: #d2b48c;
   color: white;
+  font-weight: bold;
   border: none;
   border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
   cursor: pointer;
-  transition: opacity 0.2s;
-  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 #downloadBtn:hover {
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 ::-webkit-scrollbar {
   width: 8px;
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
 ::-webkit-scrollbar-thumb {
-  background: #d2b48c;
+  background-color: #d2b48c;
   border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a0826d;
 }
