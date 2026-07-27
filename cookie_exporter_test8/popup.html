@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cookie Exporter</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <h1>Cookie Exporter</h1>
+    <small id="domainName" style="display: block; text-align: center; font-size: 12px; color: #777; margin-bottom: 10px"></small>
+    <input type="text" id="searchInput" autocomplete="off" placeholder="Search for cookie name" />
+    <div class="buttons">
+      <button id="selectAllBtn">Select All</button>
+      <button id="copyBtn">Copy to Clipboard</button>
+      <button id="refreshBtn" style="background-color: #ffcc00">Refresh Cookies</button>
+    </div>
+    <div id="cookieList"></div>
+    <textarea id="jsonOutput" readonly></textarea>
+    <button id="downloadBtn">Download as JSON</button>
+    <script src="popup.js"></script>
+  </body>
+</html>
