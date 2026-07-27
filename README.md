@@ -14,6 +14,8 @@ Cookie Exporter is a lightweight and user-friendly Chrome extension designed for
 
 ✅ Select/Deselect – Choose individual or all cookies with a single click using the Select All button.
 
+✅ Remove Duplicates – Toggle to remove duplicate cookies (keeping only one of each cookie name) for a cleaner view.
+
 ✅ Copy to Clipboard – Copy selected cookies in JSON format with one click, with instant feedback.
 
 ✅ Download as JSON – Save selected cookies as a downloadable .json file.
@@ -26,5 +28,6 @@ Cookie Exporter is a lightweight and user-friendly Chrome extension designed for
 This extension runs entirely in your browser and does not track or store any user data.
 
 Additional Information
+- Version: 1.4
 - LML used: chatgpt (https://chatgpt.com/)
 - Chrome manifest_version: 3

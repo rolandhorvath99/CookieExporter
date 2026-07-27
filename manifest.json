@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Cookie Exporter",
-    "version": "1.3",
+    "version": "1.4",
     "description": "Export all cookies from the current site including httpOnly and secure cookies",
     "permissions": ["cookies", "tabs", "debugger"],
     "host_permissions": ["<all_urls>"],

@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const searchInput = document.getElementById("searchInput");
     const downloadBtn = document.getElementById("downloadBtn");
     const domainName = document.getElementById("domainName");
+    const deduplicateCheckbox = document.getElementById("deduplicateCheckbox");
   
     let cookiesData = [];
     let currentURL = "";
@@ -144,6 +145,25 @@ document.addEventListener("DOMContentLoaded", function () {
         c.name.toLowerCase().includes(value)
       );
       renderCookies(filtered);
+    });
+  
+    deduplicateCheckbox.addEventListener("change", () => {
+      if (deduplicateCheckbox.checked) {
+        const deduped = [];
+        const seen = new Set();
+        
+        cookiesData.forEach((cookie) => {
+          if (!seen.has(cookie.name)) {
+            deduped.push(cookie);
+            seen.add(cookie.name);
+          }
+        });
+        
+        cookiesData = deduped;
+      } else {
+        loadCookies(currentURL, currentTabId);
+      }
+      renderCookies();
     });
   
     downloadBtn.addEventListener("click", () => {

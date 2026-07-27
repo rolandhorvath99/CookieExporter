@@ -36,6 +36,22 @@ h1 {
   box-sizing: border-box;
 }
 
+.deduplicate-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: #5c4033;
+  cursor: pointer;
+  user-select: none;
+}
+
+.deduplicate-option input[type="checkbox"] {
+  margin-right: 6px;
+  cursor: pointer;
+}
+
 .buttons {
   display: flex;
   justify-content: center;
